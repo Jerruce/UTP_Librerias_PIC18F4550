@@ -109,15 +109,39 @@ void UARTn_Tx_Byte(uart_module_t uart_n, char byte)
 }
 
 
+void UARTn_Tx_Block(uart_module_t uart_n,  uint16_t n_bytes, uint8_t *data)
+{
+     uint8_t byte_index = 0;
+     
+     if(n_bytes < 1)
+     {
+         n_bytes = 1;
+     }
+     else if(n_bytes > UART_TX_BLOCK_MAX_SIZE_IN_BYTES)
+     {
+         n_bytes = UART_TX_BLOCK_MAX_SIZE_IN_BYTES;
+     }
+     else
+     {
+         /* Does nothing */
+     }
+     
+	for(byte_index = 0; byte_index < n_bytes; byte_index++){
+		/* Transmit desired bytes */
+		UARTn_Tx_Byte(uart_n, data[byte_index]);
+	}   
+}
+
+
 void UARTn_Tx_String(uart_module_t uart_n, char str[])
 {
     
-    uint8_t indice = 0;
+    uint8_t byte_index = 0;
     
     /* Transmitir hasta encontrar el caracter nulo */
-    while(str[indice] != '\0'){
-        UARTn_Tx_Byte(uart_n, str[indice]);
-        indice++;
+    while(str[byte_index] != '\0'){
+        UARTn_Tx_Byte(uart_n, str[byte_index]);
+        byte_index++;
     }
     
 }

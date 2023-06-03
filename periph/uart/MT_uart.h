@@ -14,6 +14,8 @@
 
 /* Definición de macros */
 #define F_OSC              20000000UL
+#define UART_TX_BLOCK_MAX_SIZE_IN_BYTES      2000    
+
 
 /* Definición de tipos */
 typedef enum
@@ -92,6 +94,7 @@ uart_t;
 /* Declaración de funciones */
 void UART0_Configure(uart_t *uart_param);
 void UARTn_Tx_Byte(uart_module_t uart_n, char byte);
+void UARTn_Tx_Block(uart_module_t uart_n,  uint16_t n_bytes, uint8_t data[]);
 void UARTn_Tx_String(uart_module_t uart_n, char str[]);
 void UARTn_Tx_Integer(uart_module_t uart_n, int32_t num);
 
