@@ -1,0 +1,2 @@
+
+La librería del MPU6050 necesita la librería del I2C para poder funcionar.
