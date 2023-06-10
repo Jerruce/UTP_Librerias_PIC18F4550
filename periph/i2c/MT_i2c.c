@@ -4,6 +4,59 @@
 
 /* Definición de funciones */
 
+
+static void I2C1_Configure(i2c_config_t *i2c_param)
+{
+    /* Inicialziar los registros de configuración */
+    SSPCON1 = 0;
+    SSPCON2 = 0;
+    SSPSTAT = 0;
+    
+    /* Configurar el bus I2C en Modo Maestro o Modo Esclavo */
+    if(i2c_param->i2c_mode == I2C_MASTER_MODE)
+    {
+        /* En Modo Maestro ... */
+        SSPCON1bits.SSPM = 0b1000;    
+        /* Configurar la frecuencia de SCL */
+        SSPADD = ((i2c_param->i2c_fosc / i2c_param->i2c_scl_freq) - 1) / 4;
+    }
+    else
+    {
+        /* En Modo Esclavo ... */
+        SSPCON1bits.SSPM = 0b0110;
+        /* Configurar la dirección de esclavo I2C */
+        SSPADD = i2c_param->i2c_slave_addr;
+        /* Configurar la máscara para la dirección de esclavo */
+        SSPCON2 &= ~0b00111110;
+        SSPCON2 |= i2c_param->i2c_slave_addr_mask & 0b00111110; 
+    }
+    
+    /* Configurar elcontrolador de Slew Rate */
+    SSPSTATbits.SMP = i2c_param->i2c_slew_rate_control_en & 1;
+    
+    /* Habilitar la interrupción por evento de I2C, de ser el caso */
+    PIE1bits.SSPIE = i2c_param->i2c_interrupt & 1;
+    
+   /* Habilitar el bus I2C, de ser el caso */
+    SSPCON1bits.SSPEN = i2c_param->i2c_en & 1;
+    
+}
+
+
+void I2Cn_Configure(i2c_config_t *i2c_param)
+{
+    switch(i2c_param->i2c_module)
+    {
+        case I2C1_MOD:
+            I2C1_Configure(i2c_param);
+            break;
+        
+        default:
+            break;
+    }
+}
+
+
 uint8_t I2Cn_Master_Start_Condition(i2c_module_t i2c_n)
 {
     uint8_t i2c_output = I2C_OK;
